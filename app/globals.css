@@ -1,26 +1,92 @@
 @import "tailwindcss";
 
+@theme {
+  /* "sage" → playful pink */
+  --color-sage-50: #fff1f5;
+  --color-sage-100: #ffe1ec;
+  --color-sage-200: #fec1d6;
+  --color-sage-300: #fb9bbe;
+  --color-sage-400: #f677a4;
+  --color-sage-500: #ec5b8e;
+  --color-sage-600: #d63d74;
+  --color-sage-700: #b32a5d;
+  --color-sage-800: #8a1f47;
+  --color-sage-900: #621636;
+
+  /* "mist" → playful sky blue */
+  --color-mist-50: #ecf7ff;
+  --color-mist-100: #d4ecff;
+  --color-mist-200: #aedaff;
+  --color-mist-300: #7fc4ff;
+  --color-mist-400: #50a9f5;
+  --color-mist-500: #2f8de0;
+  --color-mist-600: #1f6fb8;
+  --color-mist-700: #1b5891;
+  --color-mist-800: #1a4773;
+  --color-mist-900: #173a5e;
+
+  /* "cream" → soft buttery yellow background tones */
+  --color-cream-50: #fffaf0;
+  --color-cream-100: #fff2d6;
+  --color-cream-200: #ffe8b8;
+  --color-cream-300: #ffd98a;
+  --color-cream-400: #ffc55f;
+  --color-cream-500: #f5a93b;
+
+  /* "lavender" → punchier purple accent */
+  --color-lavender-100: #f0e6ff;
+  --color-lavender-200: #ddc8ff;
+  --color-lavender-300: #c2a3ff;
+  --color-lavender-400: #a07cf0;
+  --color-lavender-500: #7f57d8;
+
+  /* "charcoal" → soft warm grey for text */
+  --color-charcoal-100: #d6d0d2;
+  --color-charcoal-300: #786d72;
+  --color-charcoal-500: #4f454a;
+  --color-charcoal-700: #3b3236;
+  --color-charcoal-900: #221b1f;
+
+  --font-sans: var(--font-nunito), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-quicksand), var(--font-nunito), system-ui, sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #fff8f0;
+  --foreground: #3b3236;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(-1deg); }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s ease-out both;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
 }

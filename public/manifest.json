@@ -1,0 +1,26 @@
+{
+  "name": "Animal Buds",
+  "short_name": "Animal Buds",
+  "description": "A stuffed bear with a tummy screen for messages from people who love you. Built to ease homesickness and social anxiety.",
+  "start_url": "/messages",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff8f0",
+  "theme_color": "#ec5b8e",
+  "icons": [
+    {
+      "src": "/images/Picture3.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/Picture3.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["lifestyle", "social", "health"],
+  "lang": "en-US"
+}
