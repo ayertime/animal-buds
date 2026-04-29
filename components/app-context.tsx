@@ -52,6 +52,7 @@ type AppContextValue = {
   rejectFriendRequest: (friendId: string) => void;
   // Messages
   sendMessage: (friendId: string, text: string) => void;
+  sendVoiceMessage: (friendId: string, audio: { dataUrl: string; durationSec: number }) => void;
   receiveAutoReply: (friendId: string, text: string) => void;
   getMessagesFor: (friendId: string) => Message[];
   getLastMessage: (friendId: string) => Message | undefined;
@@ -199,6 +200,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  const sendVoiceMessage = useCallback(
+    (friendId: string, audio: { dataUrl: string; durationSec: number }) => {
+      setState((s) => ({
+        ...s,
+        conversations: {
+          ...s.conversations,
+          [friendId]: [
+            ...(s.conversations[friendId] ?? []),
+            {
+              id: crypto.randomUUID(),
+              fromMe: true,
+              text: "🎤 Voice message",
+              sentAt: Date.now(),
+              audio,
+            },
+          ],
+        },
+      }));
+    },
+    []
+  );
+
   const receiveAutoReply = useCallback((friendId: string, text: string) => {
     setState((s) => ({
       ...s,
@@ -300,6 +323,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       acceptFriendRequest,
       rejectFriendRequest,
       sendMessage,
+      sendVoiceMessage,
       receiveAutoReply,
       getMessagesFor,
       getLastMessage,
@@ -324,6 +348,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       acceptFriendRequest,
       rejectFriendRequest,
       sendMessage,
+      sendVoiceMessage,
       receiveAutoReply,
       getMessagesFor,
       getLastMessage,

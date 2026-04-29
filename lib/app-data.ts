@@ -17,6 +17,12 @@ export type Message = {
   fromMe: boolean;
   text: string;
   sentAt: number; // unix ms
+  // Optional voice attachment. When present, the bubble renders an audio
+  // player and the bear's tummy screen shows "🎤 Voice message".
+  audio?: {
+    dataUrl: string; // base64-encoded audio blob (typically audio/webm)
+    durationSec: number;
+  };
 };
 
 export type Conversation = {
