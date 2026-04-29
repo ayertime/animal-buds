@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "./app-context";
 import FriendAvatar from "./friend-avatar";
 import { STOCK_FRIENDS } from "@/lib/app-data";
+
+type ShareStatus = "idle" | "copied" | "shared";
 
 export default function FriendsClient() {
   const {
@@ -18,10 +20,50 @@ export default function FriendsClient() {
     user,
   } = useApp();
   const [search, setSearch] = useState("");
+  const [shareStatus, setShareStatus] = useState<ShareStatus>("idle");
+
+  // Prefill the search bar from a `?code=XXXX` query param so shared invite
+  // links (e.g. opened from iMessage) land directly on the matching profile.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    if (code) setSearch(code.toUpperCase());
+  }, []);
 
   if (!hydrated) {
     return <div className="p-5 text-charcoal-300 text-sm">Loading…</div>;
   }
+
+  const handleShareInvite = async () => {
+    const url = `${window.location.origin}/friends?code=${encodeURIComponent(user.inviteCode)}`;
+    const shareData = {
+      title: "Add me on Animal Buds",
+      text: `Add me on Animal Buds with code ${user.inviteCode}`,
+      url,
+    };
+
+    // Prefer the native share sheet — opens iMessage / WhatsApp / Messages
+    // / etc. directly on iOS and Android.
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share(shareData);
+        setShareStatus("shared");
+        setTimeout(() => setShareStatus("idle"), 1800);
+        return;
+      } catch (err) {
+        // User dismissed the share sheet — silent, no fallback.
+        if ((err as Error).name === "AbortError") return;
+        // Other errors fall through to clipboard.
+      }
+    }
+
+    // Desktop / unsupported browsers: copy the full text + link to clipboard.
+    try {
+      await navigator.clipboard.writeText(`${shareData.text} → ${url}`);
+      setShareStatus("copied");
+      setTimeout(() => setShareStatus("idle"), 1800);
+    } catch {}
+  };
 
   const incomingRequestIds = new Set(incomingRequests.map((f) => f.id));
   const filteredStock = STOCK_FRIENDS.filter((f) => {
@@ -59,6 +101,32 @@ export default function FriendsClient() {
         <p className="mt-1 text-xs text-charcoal-500">
           Share this so friends can add you.
         </p>
+        <button
+          type="button"
+          onClick={handleShareInvite}
+          className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-sage-200 text-sage-700 text-sm font-bold hover:bg-sage-50 transition-colors"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+            <polyline points="16 6 12 2 8 6" />
+            <line x1="12" y1="2" x2="12" y2="15" />
+          </svg>
+          {shareStatus === "shared"
+            ? "Shared!"
+            : shareStatus === "copied"
+              ? "Link copied!"
+              : "Share invite link"}
+        </button>
       </div>
 
       {/* Find a bud — unified search by name or invite code */}
