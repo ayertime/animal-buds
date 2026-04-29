@@ -6,7 +6,17 @@ import FriendAvatar from "./friend-avatar";
 import { STOCK_FRIENDS } from "@/lib/app-data";
 
 export default function FriendsClient() {
-  const { friends, addFriend, removeFriend, isFriendAdded, hydrated, user } = useApp();
+  const {
+    friends,
+    incomingRequests,
+    addFriend,
+    removeFriend,
+    isFriendAdded,
+    acceptFriendRequest,
+    rejectFriendRequest,
+    hydrated,
+    user,
+  } = useApp();
   const [code, setCode] = useState("");
   const [codeMessage, setCodeMessage] = useState<{ text: string; tone: "success" | "error" } | null>(null);
   const [search, setSearch] = useState("");
@@ -37,7 +47,11 @@ export default function FriendsClient() {
     setCodeMessage({ text: `${match.name} added! Say hi 💌`, tone: "success" });
   };
 
+  const incomingRequestIds = new Set(incomingRequests.map((f) => f.id));
   const filteredStock = STOCK_FRIENDS.filter((f) => {
+    // Don't list pending requesters in Demo profiles — they live in the Friend
+    // requests section above with Accept/Reject buttons instead.
+    if (incomingRequestIds.has(f.id)) return false;
     if (!search) return true;
     const q = search.toLowerCase();
     return (
@@ -103,6 +117,47 @@ export default function FriendsClient() {
           </p>
         )}
       </div>
+
+      {/* Friend requests */}
+      {incomingRequests.length > 0 && (
+        <section className="mt-7">
+          <div className="flex items-baseline justify-between px-5 mb-2">
+            <h2 className="font-[family-name:var(--font-display)] text-base font-bold text-charcoal-700">
+              Friend requests
+            </h2>
+            <span className="text-xs text-charcoal-300">{incomingRequests.length}</span>
+          </div>
+          <ul className="divide-y divide-cream-200 border-t border-b border-cream-200">
+            {incomingRequests.map((requester) => (
+              <li key={requester.id} className="flex items-center gap-3 px-5 py-3">
+                <FriendAvatar friend={requester} size="md" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-charcoal-700 truncate">{requester.name}</p>
+                  <p className="text-xs text-charcoal-300 truncate">
+                    wants to be your bud
+                  </p>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => acceptFriendRequest(requester.id)}
+                    className="px-3.5 py-1.5 rounded-full bg-sage-500 text-white text-xs font-bold hover:bg-sage-600 transition-colors"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => rejectFriendRequest(requester.id)}
+                    className="px-3.5 py-1.5 rounded-full bg-cream-100 text-charcoal-500 text-xs font-bold hover:bg-cream-200 transition-colors"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Your friends */}
       <section className="mt-7">

@@ -83,8 +83,18 @@ export default function AIChatClient() {
       </div>
 
       {/* Disclaimer */}
-      <div className="bg-cream-100 px-4 py-2 text-[11px] text-charcoal-500 border-b border-cream-200">
-        💛 I'm trained for mental health support only. For emergencies, call <strong>988</strong>.
+      <div className="bg-cream-100 px-4 py-2.5 text-[11px] text-charcoal-500 border-b border-cream-200 leading-relaxed">
+        💛 I&apos;m a companion, not a replacement for a therapist. For emergencies,
+        call <strong>988</strong> (Suicide &amp; Crisis Lifeline) or seek in-person care.
+        {" "}
+        <a
+          href="https://www.psychologytoday.com/us/therapists"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-bold text-sage-700 underline underline-offset-2 hover:text-sage-800"
+        >
+          Find a therapist near you →
+        </a>
       </div>
 
       {/* Messages */}

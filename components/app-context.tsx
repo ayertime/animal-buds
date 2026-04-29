@@ -9,12 +9,13 @@ import {
   type Message,
   AI_DEMO_GREETING,
   DEFAULT_FRIEND_IDS,
+  DEFAULT_INCOMING_REQUEST_IDS,
   DEFAULT_USER,
   PRESEEDED_CONVERSATIONS,
   STOCK_FRIENDS,
 } from "@/lib/app-data";
 
-const STORAGE_KEY = "animal-buds-app-v3";
+const STORAGE_KEY = "animal-buds-app-v4";
 
 // Pairing code validation. Demo prototype — accepts any non-empty code,
 // normalizes to uppercase for consistent display.
@@ -31,6 +32,7 @@ export function validatePairingCode(input: string): PairingResult {
 type StoredState = {
   user: AppUser;
   friendIds: string[];
+  incomingRequestIds: string[];
   conversations: Record<string, Message[]>;
   aiMessages: AIMessage[];
 };
@@ -38,6 +40,7 @@ type StoredState = {
 type AppContextValue = {
   user: AppUser;
   friends: Friend[];
+  incomingRequests: Friend[];
   conversations: Record<string, Message[]>;
   aiMessages: AIMessage[];
   hydrated: boolean;
@@ -45,6 +48,8 @@ type AppContextValue = {
   addFriend: (friendId: string) => void;
   removeFriend: (friendId: string) => void;
   isFriendAdded: (friendId: string) => boolean;
+  acceptFriendRequest: (friendId: string) => void;
+  rejectFriendRequest: (friendId: string) => void;
   // Messages
   sendMessage: (friendId: string, text: string) => void;
   receiveAutoReply: (friendId: string, text: string) => void;
@@ -69,6 +74,7 @@ function defaultState(): StoredState {
   return {
     user: DEFAULT_USER,
     friendIds: [...DEFAULT_FRIEND_IDS],
+    incomingRequestIds: [...DEFAULT_INCOMING_REQUEST_IDS],
     conversations: DEFAULT_FRIEND_IDS.reduce<Record<string, Message[]>>((acc, id) => {
       acc[id] = [...(PRESEEDED_CONVERSATIONS[id] ?? [])];
       return acc;
@@ -112,18 +118,53 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [state.friendIds]
   );
 
+  const incomingRequests = useMemo(
+    () =>
+      state.incomingRequestIds
+        .map((id) => STOCK_FRIENDS.find((f) => f.id === id))
+        .filter((f): f is Friend => Boolean(f)),
+    [state.incomingRequestIds]
+  );
+
   const addFriend = useCallback((friendId: string) => {
     setState((s) => {
       if (s.friendIds.includes(friendId)) return s;
       return {
         ...s,
         friendIds: [...s.friendIds, friendId],
+        // If they happened to also have a pending request, clear it.
+        incomingRequestIds: s.incomingRequestIds.filter((id) => id !== friendId),
         conversations: {
           ...s.conversations,
           [friendId]: s.conversations[friendId] ?? [...(PRESEEDED_CONVERSATIONS[friendId] ?? [])],
         },
       };
     });
+  }, []);
+
+  const acceptFriendRequest = useCallback((friendId: string) => {
+    setState((s) => {
+      if (!s.incomingRequestIds.includes(friendId)) return s;
+      const alreadyFriend = s.friendIds.includes(friendId);
+      return {
+        ...s,
+        friendIds: alreadyFriend ? s.friendIds : [...s.friendIds, friendId],
+        incomingRequestIds: s.incomingRequestIds.filter((id) => id !== friendId),
+        conversations: alreadyFriend
+          ? s.conversations
+          : {
+              ...s.conversations,
+              [friendId]: s.conversations[friendId] ?? [...(PRESEEDED_CONVERSATIONS[friendId] ?? [])],
+            },
+      };
+    });
+  }, []);
+
+  const rejectFriendRequest = useCallback((friendId: string) => {
+    setState((s) => ({
+      ...s,
+      incomingRequestIds: s.incomingRequestIds.filter((id) => id !== friendId),
+    }));
   }, []);
 
   const removeFriend = useCallback((friendId: string) => {
@@ -249,12 +290,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     () => ({
       user: state.user,
       friends,
+      incomingRequests,
       conversations: state.conversations,
       aiMessages: state.aiMessages,
       hydrated,
       addFriend,
       removeFriend,
       isFriendAdded,
+      acceptFriendRequest,
+      rejectFriendRequest,
       sendMessage,
       receiveAutoReply,
       getMessagesFor,
@@ -270,12 +314,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [
       state.user,
       friends,
+      incomingRequests,
       state.conversations,
       state.aiMessages,
       hydrated,
       addFriend,
       removeFriend,
       isFriendAdded,
+      acceptFriendRequest,
+      rejectFriendRequest,
       sendMessage,
       receiveAutoReply,
       getMessagesFor,

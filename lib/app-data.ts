@@ -123,6 +123,10 @@ export const DEFAULT_USER: AppUser = {
 // IDs of friends pre-added on first launch
 export const DEFAULT_FRIEND_IDS = ["stock-mom", "stock-maya"];
 
+// IDs of stock friends who have "requested" to add the user. The user can
+// accept (which moves them into friends) or reject (silently dismiss).
+export const DEFAULT_INCOMING_REQUEST_IDS = ["stock-emma", "stock-jordan"];
+
 // ──────────────────────────────────────────────────────────────────────────
 // Pre-seeded conversations — every stock friend has a few messages waiting
 // so the chat feels alive when the user opens it.
@@ -143,6 +147,7 @@ export const PRESEEDED_CONVERSATIONS: Record<string, Message[]> = {
     { id: "y2", fromMe: true, text: "yes pls i need it", sentAt: HOURS_AGO(20) },
     { id: "y3", fromMe: false, text: "How's that paper going? You ok?", sentAt: HOURS_AGO(2) },
     { id: "y4", fromMe: false, text: "Hey just checking in 💜", sentAt: MIN_AGO(8) },
+    { id: "y5", fromMe: false, text: "Goodnight Love You 💤", sentAt: MIN_AGO(2) },
   ],
   "stock-dad": [
     { id: "d1", fromMe: false, text: "👍", sentAt: HOURS_AGO(48) },
