@@ -117,7 +117,7 @@ export const DEFAULT_USER: AppUser = {
   name: "You",
   bearName: "Mochi",
   inviteCode: "MOCHI42",
-  pairedBearCode: null,
+  pairedBearCode: "BUD-1234",
 };
 
 // IDs of friends pre-added on first launch

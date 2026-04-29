@@ -14,7 +14,7 @@ import {
   STOCK_FRIENDS,
 } from "@/lib/app-data";
 
-const STORAGE_KEY = "animal-buds-app-v2";
+const STORAGE_KEY = "animal-buds-app-v3";
 
 // Pairing code validation. Demo prototype — accepts any non-empty code,
 // normalizes to uppercase for consistent display.

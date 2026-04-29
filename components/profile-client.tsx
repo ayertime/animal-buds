@@ -102,18 +102,22 @@ export default function ProfileClient() {
 
         {user.pairedBearCode ? (
           <div className="mt-3">
-            <div className="rounded-xl bg-sage-50 border border-sage-200 p-4 flex items-start gap-3">
-              <span className="text-xl">✅</span>
-              <div className="flex-1">
-                <p className="font-bold text-sage-700 text-sm">Connected to your Bud</p>
-                <p className="text-xs text-charcoal-500 mt-0.5">
-                  Code{" "}
-                  <span className="font-[family-name:var(--font-display)] tracking-wider text-charcoal-700">
-                    {user.pairedBearCode}
-                  </span>
-                  . Messages will appear on the tummy screen.
-                </p>
+            <div className="rounded-xl bg-sage-50 border border-sage-200 p-5 text-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 border border-green-300">
+                <span className="relative flex w-2 h-2">
+                  <span className="absolute inline-flex w-full h-full rounded-full bg-green-500 opacity-75 animate-ping" />
+                  <span className="relative inline-flex w-2 h-2 rounded-full bg-green-600" />
+                </span>
+                <span className="text-[11px] font-bold tracking-widest uppercase text-green-700">
+                  Connected
+                </span>
               </div>
+              <p className="mt-3 font-[family-name:var(--font-display)] text-3xl font-bold tracking-wider text-charcoal-700">
+                {user.pairedBearCode}
+              </p>
+              <p className="mt-2 text-xs text-charcoal-500">
+                Friends&apos; messages will light up on your Bud&apos;s tummy screen.
+              </p>
             </div>
             <button
               type="button"
