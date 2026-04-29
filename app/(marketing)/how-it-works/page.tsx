@@ -55,7 +55,7 @@ export default function HowItWorksPage() {
                 Multi-day battery, easy charging with the cable you already have.
               </Feature>
               <Feature icon="⏻" title="On/Off Button">
-                Press to wake the screen. Auto-sleeps to save power.
+                Tucked into the bottom of the foot. Press to wake the screen — auto-sleeps to save power.
               </Feature>
               <Feature icon="🔉" title="Volume Slider">
                 Subtle slide control on the side — quiet for class, louder for home.
@@ -85,7 +85,7 @@ export default function HowItWorksPage() {
             num={1}
             icon="⏻"
             title="Power on your Bud"
-            body="Press the on/off button on the bear's back. Wait for the tummy screen to wake up."
+            body="Press the on/off button on the bottom of the bear's foot. Wait for the tummy screen to wake up."
           />
           <PairStep
             num={2}
