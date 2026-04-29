@@ -35,6 +35,9 @@ export type AppUser = {
   name: string;
   bearName: string;
   inviteCode: string;
+  // Code displayed on the physical bear's tummy screen during pairing.
+  // null = bear not yet paired to this app.
+  pairedBearCode: string | null;
 };
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -114,6 +117,7 @@ export const DEFAULT_USER: AppUser = {
   name: "You",
   bearName: "Mochi",
   inviteCode: "MOCHI42",
+  pairedBearCode: null,
 };
 
 // IDs of friends pre-added on first launch

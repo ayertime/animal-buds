@@ -14,7 +14,19 @@ import {
   STOCK_FRIENDS,
 } from "@/lib/app-data";
 
-const STORAGE_KEY = "animal-buds-app-v1";
+const STORAGE_KEY = "animal-buds-app-v2";
+
+// Pairing code validation. Demo prototype — accepts any non-empty code,
+// normalizes to uppercase for consistent display.
+export type PairingResult =
+  | { ok: true; code: string }
+  | { ok: false; error: string };
+
+export function validatePairingCode(input: string): PairingResult {
+  const cleaned = input.trim().toUpperCase();
+  if (!cleaned) return { ok: false, error: "Enter a code from your Bud's screen." };
+  return { ok: true, code: cleaned };
+}
 
 type StoredState = {
   user: AppUser;
@@ -44,6 +56,9 @@ type AppContextValue = {
   resetAIChat: () => void;
   // Profile
   updateUser: (patch: Partial<AppUser>) => void;
+  // Bear pairing
+  pairBear: (code: string) => PairingResult;
+  unpairBear: () => void;
   // Reset (useful for demo)
   resetApp: () => void;
 };
@@ -214,6 +229,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState((s) => ({ ...s, user: { ...s.user, ...patch } }));
   }, []);
 
+  const pairBear = useCallback((code: string): PairingResult => {
+    const result = validatePairingCode(code);
+    if (result.ok) {
+      setState((s) => ({ ...s, user: { ...s.user, pairedBearCode: result.code } }));
+    }
+    return result;
+  }, []);
+
+  const unpairBear = useCallback(() => {
+    setState((s) => ({ ...s, user: { ...s.user, pairedBearCode: null } }));
+  }, []);
+
   const resetApp = useCallback(() => {
     setState(defaultState());
   }, []);
@@ -236,6 +263,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       receiveAIMessage,
       resetAIChat,
       updateUser,
+      pairBear,
+      unpairBear,
       resetApp,
     }),
     [
@@ -255,6 +284,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       receiveAIMessage,
       resetAIChat,
       updateUser,
+      pairBear,
+      unpairBear,
       resetApp,
     ]
   );

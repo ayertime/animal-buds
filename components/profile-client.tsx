@@ -5,11 +5,13 @@ import { useState } from "react";
 import { useApp } from "./app-context";
 
 export default function ProfileClient() {
-  const { user, friends, updateUser, resetApp, hydrated } = useApp();
+  const { user, friends, updateUser, pairBear, unpairBear, resetApp, hydrated } = useApp();
   const [editing, setEditing] = useState(false);
   const [bearName, setBearName] = useState(user.bearName);
   const [name, setName] = useState(user.name);
   const [copied, setCopied] = useState(false);
+  const [pairingInput, setPairingInput] = useState("");
+  const [pairingError, setPairingError] = useState<string | null>(null);
 
   if (!hydrated) {
     return <div className="p-5 text-charcoal-300 text-sm">Loading…</div>;
@@ -26,6 +28,22 @@ export default function ProfileClient() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {}
+  };
+
+  const handlePair = () => {
+    const result = pairBear(pairingInput);
+    if (result.ok) {
+      setPairingInput("");
+      setPairingError(null);
+    } else {
+      setPairingError(result.error);
+    }
+  };
+
+  const handleUnpair = () => {
+    if (confirm("Unpair this Bud? Messages will stop showing on the bear's tummy screen.")) {
+      unpairBear();
+    }
   };
 
   const handleReset = () => {
@@ -74,6 +92,77 @@ export default function ProfileClient() {
           Share this code so friends can add you.
         </p>
       </div>
+
+      {/* Pair your Bud */}
+      <section className="mt-6 mx-5 rounded-2xl bg-white border border-cream-200 p-5">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">🔗</span>
+          <h2 className="font-bold text-charcoal-700 text-sm">Pair your Bud</h2>
+        </div>
+
+        {user.pairedBearCode ? (
+          <div className="mt-3">
+            <div className="rounded-xl bg-sage-50 border border-sage-200 p-4 flex items-start gap-3">
+              <span className="text-xl">✅</span>
+              <div className="flex-1">
+                <p className="font-bold text-sage-700 text-sm">Connected to your Bud</p>
+                <p className="text-xs text-charcoal-500 mt-0.5">
+                  Code{" "}
+                  <span className="font-[family-name:var(--font-display)] tracking-wider text-charcoal-700">
+                    {user.pairedBearCode}
+                  </span>
+                  . Messages will appear on the tummy screen.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleUnpair}
+              className="mt-3 text-xs font-bold text-charcoal-500 hover:text-charcoal-700 underline"
+            >
+              Unpair this Bud
+            </button>
+          </div>
+        ) : (
+          <div className="mt-3">
+            <p className="text-xs text-charcoal-500 leading-relaxed">
+              Enter the pairing code from your Animal Bud&apos;s tummy screen to connect
+              your bear. Messages from friends will then light up on the screen.
+            </p>
+            <div className="mt-3 flex gap-2">
+              <input
+                type="text"
+                value={pairingInput}
+                onChange={(e) => {
+                  setPairingInput(e.target.value);
+                  if (pairingError) setPairingError(null);
+                }}
+                placeholder="e.g. BUD-1234"
+                aria-label="Pairing code"
+                aria-invalid={pairingError ? true : undefined}
+                className="flex-1 px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 focus:border-sage-300 focus:outline-none text-sm font-[family-name:var(--font-display)] tracking-wider"
+                maxLength={20}
+              />
+              <button
+                type="button"
+                onClick={handlePair}
+                disabled={!pairingInput.trim()}
+                className="px-4 py-2 rounded-full bg-sage-500 text-white text-sm font-bold hover:bg-sage-600 disabled:bg-cream-200 disabled:text-charcoal-300 disabled:cursor-not-allowed transition-colors"
+              >
+                Pair
+              </button>
+            </div>
+            {pairingError && (
+              <p role="alert" className="mt-2 text-xs text-red-600">
+                {pairingError}
+              </p>
+            )}
+            <p className="mt-2 text-[11px] text-charcoal-300 leading-relaxed">
+              Don&apos;t see a code? Power on your Bud and check the tummy screen.
+            </p>
+          </div>
+        )}
+      </section>
 
       {/* Edit profile */}
       <section className="mt-6 mx-5 rounded-2xl bg-white border border-cream-200 p-5">

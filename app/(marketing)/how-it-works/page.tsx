@@ -65,6 +65,50 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
+      {/* PAIRING */}
+      <section className="mt-20">
+        <div className="text-center max-w-2xl mx-auto">
+          <p className="text-xs font-bold tracking-widest uppercase text-sage-600">
+            First Time Setup
+          </p>
+          <h2 className="mt-2 font-[family-name:var(--font-display)] text-3xl font-bold text-charcoal-700">
+            First, pair your Bud.
+          </h2>
+          <p className="mt-3 text-charcoal-500">
+            One quick step to link the bear to the app — so messages from your friends
+            know where to land.
+          </p>
+        </div>
+
+        <ol className="mt-12 grid md:grid-cols-3 gap-5">
+          <PairStep
+            num={1}
+            icon="⏻"
+            title="Power on your Bud"
+            body="Press the on/off button on the bear's back. Wait for the tummy screen to wake up."
+          />
+          <PairStep
+            num={2}
+            icon="🔢"
+            title="See the pairing code"
+            body="A short code appears on the tummy screen. It's unique to your bear."
+          />
+          <PairStep
+            num={3}
+            icon="📲"
+            title="Type it into the app"
+            body="Open the app, tap the Me tab, and enter the code under 'Pair your Bud'. That's it — you're connected."
+          />
+        </ol>
+
+        <div className="mt-10 max-w-2xl mx-auto rounded-2xl bg-cream-100 border border-cream-200 p-5 text-center">
+          <p className="text-sm text-charcoal-500 leading-relaxed">
+            <span className="font-bold text-charcoal-700">Lost the code?</span> Power your
+            Bud off and back on — a fresh code will appear on the tummy screen.
+          </p>
+        </div>
+      </section>
+
       {/* JOURNEY */}
       <section className="mt-20">
         <h2 className="text-center font-[family-name:var(--font-display)] text-3xl font-bold text-charcoal-700">
@@ -159,6 +203,19 @@ function Step({ num, icon, title, body }: { num: number; icon: string; title: st
     <li className="rounded-2xl bg-white border border-sage-100 p-6 text-center">
       <div className="text-3xl">{icon}</div>
       <p className="mt-2 text-xs font-bold tracking-widest uppercase text-sage-600">Step {num}</p>
+      <p className="mt-1 font-[family-name:var(--font-display)] text-lg font-bold text-charcoal-700">{title}</p>
+      <p className="mt-2 text-sm text-charcoal-500 leading-relaxed">{body}</p>
+    </li>
+  );
+}
+
+function PairStep({ num, icon, title, body }: { num: number; icon: string; title: string; body: string }) {
+  return (
+    <li className="rounded-2xl bg-gradient-to-br from-sage-50 to-cream-50 border border-sage-100 p-6 text-center">
+      <div className="w-14 h-14 mx-auto rounded-full bg-white border border-sage-100 flex items-center justify-center text-2xl">
+        {icon}
+      </div>
+      <p className="mt-3 text-xs font-bold tracking-widest uppercase text-sage-600">Step {num}</p>
       <p className="mt-1 font-[family-name:var(--font-display)] text-lg font-bold text-charcoal-700">{title}</p>
       <p className="mt-2 text-sm text-charcoal-500 leading-relaxed">{body}</p>
     </li>
